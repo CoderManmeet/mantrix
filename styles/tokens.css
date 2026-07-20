@@ -1,0 +1,77 @@
+/* ============================================================
+   MANTRIX DESIGN TOKENS
+   Source of truth: MANTRIX_MASTER_SPECIFICATION Part 2 & 4.
+   Do not hardcode these values anywhere else in the codebase.
+   ============================================================ */
+
+@theme {
+  /* ---------- COLOR SYSTEM ---------- */
+  --color-black: #0a0a0a;
+  --color-surface: #111111;
+  --color-elevated: #181818;
+  --color-border: #262626;
+
+  --color-text-primary: #f5f5f5;
+  --color-text-secondary: #a1a1aa;
+
+  --color-accent: #00e5ff;
+  --color-accent-hover: #66f2ff;
+  --color-accent-glow: rgba(0, 229, 255, 0.25);
+
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+
+  /* ---------- TYPE SCALE (desktop) ---------- */
+  /* Hero is fluid (72-96px) — handled with clamp() at component level, not here */
+  --text-h1: 4rem; /* 64px */
+  --text-h1--line-height: 1.1;
+  --text-h2: 3rem; /* 48px */
+  --text-h2--line-height: 1.15;
+  --text-h3: 2.25rem; /* 36px */
+  --text-h3--line-height: 1.2;
+  --text-h4: 1.75rem; /* 28px */
+  --text-h4--line-height: 1.25;
+  --text-h5: 1.375rem; /* 22px */
+  --text-h5--line-height: 1.3;
+  --text-body: 1.125rem; /* 18px */
+  --text-body--line-height: 1.6;
+  --text-small: 1rem; /* 16px */
+  --text-small--line-height: 1.5;
+  --text-caption: 0.875rem; /* 14px */
+  --text-caption--line-height: 1.4;
+
+  /* ---------- BORDER RADIUS ---------- */
+  --radius-sm: 0.75rem; /* 12px */
+  --radius-md: 1.125rem; /* 18px */
+  --radius-lg: 1.5rem; /* 24px */
+  --radius-card: 1.75rem; /* 28px */
+  --radius-pill: 999px;
+
+  /* ---------- MOTION DURATIONS (CSS transitions only — GSAP/Framer use constants/motion.ts) ---------- */
+  --duration-ultra-fast: 150ms;
+  --duration-fast: 220ms;
+  --duration-normal: 350ms;
+  --duration-slow: 600ms;
+  --duration-hover: 250ms; /* button/card hover per Part 2 */
+  --duration-page: 800ms;
+}
+
+/* ---------- STRUCTURAL TOKENS (not Tailwind utility-generating) ---------- */
+:root {
+  --container-width: 1400px;
+  --content-width: 1280px;
+  --reading-width: 720px;
+
+  /* Shadows — soft elevation + accent glow only, never black shadows */
+  --shadow-elevation: 0 8px 24px rgba(0, 0, 0, 0.25);
+  --shadow-accent-glow: 0 0 24px var(--color-accent-glow);
+
+  /* Z-index scale */
+  --z-base: 0;
+  --z-nav: 100;
+  --z-cursor: 200;
+  --z-loader: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+}

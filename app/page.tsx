@@ -4,6 +4,8 @@ export default function Home() {
       <p className="font-mono text-sm text-neutral-400">
         MANTRIX — foundation stage. Sections arrive in later milestones.
       </p>
+
+      
     </main>
   );
 }
