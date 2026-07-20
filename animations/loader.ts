@@ -9,23 +9,25 @@ interface LoaderTimelineRefs {
 }
 
 /**
- * Single source of truth for the loader sequence — matches LOADER timeline
- * in the spec exactly (timestamps in seconds). Do not duplicate this
- * timeline elsewhere; import buildLoaderTimeline wherever the loader runs.
+ * Single source of truth for the loader sequence.
+ * Total runtime: ~2.3–2.5s per spec.
+ * Sequence: noise -> pulse line -> MANTRIX reveal -> tagline -> dissolve into Hero.
+ * Do not duplicate this timeline elsewhere; import buildLoaderTimeline wherever
+ * the loader runs.
  */
 export function buildLoaderTimeline(refs: LoaderTimelineRefs, onComplete: () => void) {
   const tl = gsap.timeline({ onComplete });
 
   if (refs.noise) {
-    tl.fromTo(refs.noise, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.2);
+    tl.fromTo(refs.noise, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.1);
   }
 
   if (refs.pulseLine) {
     tl.fromTo(
       refs.pulseLine,
       { strokeDashoffset: 1000 },
-      { strokeDashoffset: 0, duration: 0.5, ease: "power3.out" },
-      0.4
+      { strokeDashoffset: 0, duration: 0.4, ease: "power3.out" },
+      0.3
     );
   }
 
@@ -33,8 +35,8 @@ export function buildLoaderTimeline(refs: LoaderTimelineRefs, onComplete: () => 
     tl.fromTo(
       refs.wordmarkLetters,
       { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.5, stagger: 0.04, ease: "expo.out" },
-      0.8
+      { opacity: 1, y: 0, duration: 0.4, stagger: 0.03, ease: "expo.out" },
+      0.7
     );
   }
 
@@ -42,16 +44,16 @@ export function buildLoaderTimeline(refs: LoaderTimelineRefs, onComplete: () => 
     tl.fromTo(
       refs.tagline,
       { opacity: 0, y: 8 },
-      { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
-      1.4
+      { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+      1.3
     );
   }
 
   if (refs.container) {
     tl.to(
       refs.container,
-      { opacity: 0, duration: 0.5, ease: "power2.inOut" },
-      2.1
+      { opacity: 0, duration: 0.4, ease: "power2.inOut" },
+      1.9
     );
   }
 
