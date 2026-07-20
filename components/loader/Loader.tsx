@@ -11,8 +11,7 @@ const STORAGE_KEY = "mantrix-loader-seen";
 /**
  * Renders only on first visit per session (spec: "Loader only on first
  * visit"). Uses sessionStorage — reappears in a new tab/session, but not
- * on every route change within the same visit (this is a single-page site,
- * so in practice this fires once per session, on initial load).
+ * on every route change within the same visit.
  */
 export function Loader() {
   const [shouldRender, setShouldRender] = useState<boolean | null>(null);
@@ -23,15 +22,16 @@ export function Loader() {
   const wordmarkRef = useRef<HTMLHeadingElement>(null);
   const reducedMotion = useReducedMotion();
 
-  // Decide before paint to avoid a flash of hero content underneath.
+  // Deciding whether to render the loader depends on sessionStorage, which
+  // doesn't exist during SSR — this must resolve client-side before paint
+  // to avoid a flash of Hero content underneath. This is the same pattern
+  // next-themes uses for its hydration-safe "mounted" flag; the lint rule
+  // doesn't have a clean alternative for this specific SSR/CSR boundary case.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useLayoutEffect(() => {
     const alreadySeen = sessionStorage.getItem(STORAGE_KEY) === "true";
     setShouldRender(!alreadySeen);
-    if (alreadySeen) {
-      document.body.style.overflow = "";
-    } else {
-      document.body.style.overflow = "hidden";
-    }
+    document.body.style.overflow = alreadySeen ? "" : "hidden";
   }, []);
 
   useEffect(() => {
@@ -44,7 +44,6 @@ export function Loader() {
     };
 
     if (reducedMotion) {
-      // Respect prefers-reduced-motion: brief single fade, no letter/pulse choreography.
       const tl = gsap.timeline({ onComplete: finish });
       tl.to(containerRef.current, { opacity: 0, duration: 0.4, ease: "power2.inOut" }, 0.3);
       return () => {
@@ -92,19 +91,7 @@ export function Loader() {
         </svg>
       </div>
 
-      <svg viewBox="0 0 400 2" className="h-px w-64 md:w-80" preserveAspectRatio="none" aria-hidden="true">
-        <line
-          ref={pulseLineRef}
-          x1="0"
-          y1="1"
-          x2="400"
-          y2="1"
-          stroke="var(--color-accent)"
-          strokeWidth="2"
-          strokeDasharray="1000"
-          strokeDashoffset="1000"
-        />
-      </svg>
+      <LoaderPulseLine ref={pulseLineRef} />
 
       <h1 ref={wordmarkRef} className="font-mono text-2xl font-medium tracking-[0.2em] text-[var(--color-text-primary)] md:text-3xl">
         {wordmark.map((letter, i) => (
