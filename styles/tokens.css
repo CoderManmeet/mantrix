@@ -75,3 +75,35 @@
   --z-modal: 400;
   --z-toast: 500;
 }
+
+
+@layer utilities {
+  @keyframes grid-drift {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: 64px 64px;
+    }
+  }
+
+  @keyframes glow-pulse {
+    0%,
+    100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes line-drift {
+    0%,
+    100% {
+      transform: translateY(-4%);
+    }
+    50% {
+      transform: translateY(4%);
+    }
+  }
+}
