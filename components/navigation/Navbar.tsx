@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { NAV_ITEMS, NAV_CTA, NAV_LOGO } from "@/constants/navigation";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { useActiveSection } from "@/hooks/useActiveSection";
+import { useMagnetic } from "@/hooks/useMagnetic";
 import { Button } from "@/components/ui/Button";
 import { MobileNav } from "@/components/navigation/MobileNav";
 
@@ -12,6 +13,7 @@ export function Navbar() {
   const { isScrolled } = useScrollDirection();
   const activeId = useActiveSection(NAV_ITEMS.map((item) => item.href.replace("#", "")));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const ctaMagneticRef = useMagnetic<HTMLButtonElement>();
 
   return (
     <header
@@ -26,7 +28,7 @@ export function Navbar() {
         aria-label="Primary"
         className="mx-auto flex h-20 max-w-[var(--container-width)] items-center justify-between px-6 md:px-10 lg:px-16"
       >
-        <a href={NAV_LOGO.href} className="font-mono text-lg font-medium tracking-tight text-[var(--color-text-primary)]">
+        <a href={NAV_LOGO.href} data-cursor="clickable" className="font-mono text-lg font-medium tracking-tight text-[var(--color-text-primary)]">
           {NAV_LOGO.label}
         </a>
 
@@ -35,7 +37,7 @@ export function Navbar() {
             const isActive = activeId === item.href.replace("#", "");
             return (
               <li key={item.href}>
-                <a href={item.href} aria-current={isActive ? "true" : undefined} className={cn(
+                <a href={item.href} data-cursor="clickable" aria-current={isActive ? "true" : undefined} className={cn(
                     "group relative text-sm font-medium transition-colors duration-250",
                     isActive
                       ? "text-[var(--color-accent)]"
@@ -55,13 +57,14 @@ export function Navbar() {
         </ul>
 
         <div className="hidden md:block">
-          <Button variant="primary" showArrow>
+          <Button ref={ctaMagneticRef} variant="primary" showArrow data-cursor="clickable">
             {NAV_CTA.label}
           </Button>
         </div>
 
         <button
           type="button"
+          data-cursor="clickable"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((prev) => !prev)}

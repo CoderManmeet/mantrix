@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import { Background } from "@/components/layout/Background";
 import { Navbar } from "@/components/navigation/Navbar";
 import { Loader } from "@/components/loader/Loader";
+import { SpotlightCursor } from "@/components/cursor/SpotlightCursor";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -15,17 +16,44 @@ export const metadata: Metadata = {
     "We engineer intelligent digital systems that help ambitious businesses grow faster.",
 };
 
+// export default function RootLayout({
+//   children,
+// }: Readonly<{ children: React.ReactNode }>) {
+//   return (
+//     <html lang="en">
+//       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+//         <ThemeProvider>
+//           <Loader />
+//           <Background />
+//           <SpotlightCursor />
+//           <Navbar />
+//           < div className="relative z-10">{children}</div>
+//         </ThemeProvider>
+//       </body>
+//     </html>
+//   );
+// }
+
+
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable}`}
+      >
         <ThemeProvider>
           <Loader />
           <Background />
+          <SpotlightCursor />
           <Navbar />
-          <div className="relative z-10">{children}</div>
+
+          <div className="relative z-10">
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>
