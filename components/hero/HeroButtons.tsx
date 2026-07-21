@@ -1,14 +1,16 @@
 "use client";
 
+import { forwardRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { NAV_CTA } from "@/constants/navigation";
 import { HERO_CONTENT } from "@/content/hero";
 
 /**
- * Stage 07 — layout only. Deliberately does NOT wire up useMagnetic() yet:
- * magnetic pull is an interaction/motion concern reserved for Stage 08
- * (spec BUTTON SYSTEM: magnetic applies to "Primary CTA, Navigation,
- * Project Cards, Contact Button" — but this stage is structure-only).
+ * Stage 07 layout unchanged — still does NOT wire up useMagnetic() (that's
+ * a separate interaction concern, spec-scoped independently of this
+ * entrance timeline). Stage 08 only adds the forwarded ref so Hero.tsx's
+ * master timeline can find both rendered <button> elements via
+ * querySelectorAll and animate them together as one section.
  *
  * Targets (#contact, #work) don't exist as sections yet — scrollIntoView
  * no-ops gracefully via the optional chain until those sections land in
@@ -19,9 +21,9 @@ function scrollToSection(href: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 }
 
-export function HeroButtons() {
+export const HeroButtons = forwardRef<HTMLDivElement>((_props, ref) => {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+    <div ref={ref} className="flex flex-col gap-4 sm:flex-row sm:items-center">
       <Button
         variant="primary"
         showArrow
@@ -40,4 +42,6 @@ export function HeroButtons() {
       </Button>
     </div>
   );
-}
+});
+
+HeroButtons.displayName = "HeroButtons";

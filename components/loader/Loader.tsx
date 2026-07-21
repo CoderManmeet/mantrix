@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { buildLoaderTimeline } from "@/animations/loader";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { LOADER_COMPLETE_EVENT } from "@/hooks/useLoaderComplete";
 import { LoaderPulseLine } from "@/components/loader/LoaderPulseLine";
 
 const STORAGE_KEY = "mantrix-loader-seen";
@@ -39,6 +40,7 @@ export function Loader() {
       sessionStorage.setItem(STORAGE_KEY, "true");
       document.body.style.overflow = "";
       setShouldRender(false);
+      window.dispatchEvent(new Event(LOADER_COMPLETE_EVENT));
     };
 
     if (reducedMotion) {
