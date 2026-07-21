@@ -24,16 +24,14 @@ export function Loader() {
 
   // Deciding whether to render the loader depends on sessionStorage, which
   // doesn't exist during SSR — this must resolve client-side before paint
-  // to avoid a flash of Hero content underneath. This is the same pattern
-  // next-themes uses for its hydration-safe "mounted" flag; the lint rule
-  // doesn't have a clean alternative for this specific SSR/CSR boundary case.
-  // eslint-disable-next-line react-hooks/set-state-in-effect
+  // to avoid a flash of Hero content underneath. Same justified pattern as
+  // next-themes' hydration-safe "mounted" flag.
   useLayoutEffect(() => {
     const alreadySeen = sessionStorage.getItem(STORAGE_KEY) === "true";
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- justified: sessionStorage is client-only; see comment above.
     setShouldRender(!alreadySeen);
     document.body.style.overflow = alreadySeen ? "" : "hidden";
   }, []);
-
   useEffect(() => {
     if (!shouldRender) return;
 
