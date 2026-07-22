@@ -9,7 +9,13 @@ function ProjectPreview({ project }: { project: Project }) {
   if (project.imageUrl) {
     return (
       <div className="relative aspect-video w-full overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)]">
-        <Image src={project.imageUrl} alt={`${project.name} preview`} fill className="object-cover" />
+        <Image
+          src={project.imageUrl}
+          alt={`${project.name} preview`}
+          fill
+          sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 90vw"
+          className="object-cover"
+        />
       </div>
     );
   }

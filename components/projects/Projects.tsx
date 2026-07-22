@@ -44,11 +44,17 @@ export function Projects() {
           })}
         </div>
 
-        <Grid>
-          {visibleProjects.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
-          ))}
-        </Grid>
+        {visibleProjects.length > 0 ? (
+          <Grid>
+            {visibleProjects.map((project) => (
+              <ProjectCard key={project.slug} project={project} />
+            ))}
+          </Grid>
+        ) : (
+          <p className="py-16 text-center text-body text-[var(--color-text-secondary)]">
+            No projects in this category yet.
+          </p>
+        )}
       </Container>
     </section>
   );
