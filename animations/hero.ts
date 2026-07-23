@@ -1,4 +1,5 @@
 import gsap from "gsap";
+import { GSAP_EASE } from "@/constants/motion";
 
 interface HeroTimelineRefs {
   network: HTMLElement | null;
@@ -37,6 +38,8 @@ interface HeroTimelineRefs {
  * block — the timeline is additive, no existing step needs to move unless
  * the new one must interleave with it.
  */
+// ...(interface unchanged)...
+
 export function buildHeroTimeline(refs: HeroTimelineRefs) {
   const animatedTargets = [
     refs.network,
@@ -47,12 +50,11 @@ export function buildHeroTimeline(refs: HeroTimelineRefs) {
   ].filter((el): el is HTMLElement => Boolean(el));
 
   const tl = gsap.timeline({
-    defaults: { ease: "power4.out" },
+    defaults: { ease: GSAP_EASE.hero },
     onComplete: () => {
       gsap.set(animatedTargets, { clearProps: "transform,opacity" });
     },
   });
-
   if (refs.network) {
     tl.fromTo(
       refs.network,

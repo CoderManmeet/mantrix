@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { DURATION, GSAP_EASE } from "@/constants/motion";
 
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -16,7 +17,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
     const tween = gsap.fromTo(
       containerRef.current,
       { opacity: 0, y: 12 },
-      { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", clearProps: "transform,opacity" }
+      { opacity: 1, y: 0, duration: DURATION.page, ease: GSAP_EASE.page, clearProps: "transform,opacity" }
     );
 
     return () => {

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Image as ImageIcon, Monitor, Smartphone, Tablet } from "lucide-react";
 import { type Project } from "@/content/projects";
+import { pillBadge } from "@/lib/utils";
 
 function ProjectPreview({ project }: { project: Project }) {
   if (project.imageUrl) {
@@ -56,16 +57,11 @@ export function ProjectCard({ project }: { project: Project }) {
 
       <div className="flex flex-wrap gap-2">
         {project.categories.map((category) => (
-          <span
-            key={category}
-            className="rounded-[var(--radius-pill)] border border-[var(--color-border)] px-3 py-1 text-caption text-[var(--color-text-secondary)]"
-          >
+          <span key={category} className={pillBadge()}>
             {category}
           </span>
         ))}
-        <span className="rounded-[var(--radius-pill)] border border-[var(--color-border)] px-3 py-1 text-caption text-[var(--color-accent)]">
-          {project.status}
-        </span>
+        <span className={pillBadge("active")}>{project.status}</span>
       </div>
 
       <div className="grid grid-rows-[0fr] overflow-hidden transition-[grid-template-rows] duration-350 group-hover:grid-rows-[1fr]">

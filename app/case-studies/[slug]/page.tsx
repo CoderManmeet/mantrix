@@ -4,6 +4,8 @@ import { ArrowLeft } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { PROJECTS } from "@/content/projects";
 import { CASE_STUDIES, type CaseStudySections } from "@/content/caseStudies";
+import { pillBadge } from "@/lib/utils";
+
 
 export function generateStaticParams() {
   return PROJECTS.map((project) => ({ slug: project.slug }));
@@ -64,10 +66,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
         {project.stack && (
           <div className="mt-6 flex flex-wrap gap-2">
             {project.stack.map((tech) => (
-              <span
-                key={tech}
-                className="rounded-[var(--radius-pill)] border border-[var(--color-border)] px-3 py-1 text-caption text-[var(--color-text-secondary)]"
-              >
+              <span key={tech} className={pillBadge()}>
                 {tech}
               </span>
             ))}
