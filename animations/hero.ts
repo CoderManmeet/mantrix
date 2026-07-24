@@ -168,7 +168,7 @@ export function attachHeroPortraitParallax(
     const rect = container.getBoundingClientRect();
     const relX = (event.clientX - rect.left) / rect.width - 0.5;
     const relY = (event.clientY - rect.top) / rect.height - 0.5;
-    quickX(relX * maxOffset * 2);
+    quickX(relX * maxOffset);
     quickY(relY * maxOffset);
   }
 

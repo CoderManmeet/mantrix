@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+// import { ArrowLeft } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { PROJECTS } from "@/content/projects";
 import { CASE_STUDIES, type CaseStudySections } from "@/content/caseStudies";
 import { pillBadge } from "@/lib/utils";
+import { FaGithub } from "react-icons/fa";
+// import { ArrowUpRight, Github } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, GitBranch } from "lucide-react";
 
 
 export function generateStaticParams() {
@@ -70,6 +73,38 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
                 {tech}
               </span>
             ))}
+          </div>
+        )}
+
+
+         {(project.url || project.githubUrl) && (
+          <div className="mt-8 flex flex-wrap gap-4">
+            {project.url && (
+              
+              <a
+              href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="clickable"
+                className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-[var(--color-border)] px-4 py-2 text-small text-[var(--color-text-primary)] transition-colors duration-250 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+              >
+                View Live
+                <ArrowUpRight size={16} strokeWidth={1.75} />
+              </a>
+            )}
+            {project.githubUrl && (
+              
+               <a
+               href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="clickable"
+                className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-[var(--color-border)] px-4 py-2 text-small text-[var(--color-text-primary)] transition-colors duration-250 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+              >
+                <FaGithub className="h-4 w-4" />
+                View Code
+              </a>
+            )}
           </div>
         )}
 
