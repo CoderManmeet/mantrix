@@ -10,6 +10,12 @@ import { applyCursorState } from "@/animations/cursor";
  * the inner element owns the static -50% centering transform + scale.
  * Combining both on one element would cause GSAP to overwrite the
  * centering transform on every frame.
+ *
+ * Toned down from the original: smaller radius (h-64/w-64 -> h-48/w-48),
+ * lower opacity, and the gradient itself fades out earlier (0% -> 55%
+ * instead of 0% -> 70%) so it reads as a soft ambient hint rather than a
+ * visible glowing box when it passes over lighter content like the
+ * portrait photo.
  */
 export function SpotlightCursor() {
   const { dotRef, cursorState, isDesktop } = useSpotlight();
@@ -28,9 +34,9 @@ export function SpotlightCursor() {
       className="pointer-events-none fixed left-0 top-0 z-[var(--z-cursor)]"
     >
       <div
-        className="h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-screen"
+        className="h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-screen opacity-40"
         style={{
-          background: "radial-gradient(circle, var(--color-accent-glow) 0%, transparent 70%)",
+          background: "radial-gradient(circle, var(--color-accent-glow) 0%, transparent 55%)",
         }}
       />
     </div>

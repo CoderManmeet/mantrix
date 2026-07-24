@@ -34,13 +34,18 @@ const EDGES: [number, number][] = [
  * (spec HERO CHOREOGRAPHY: "Digital network draws") and adds subtle drift.
  * Hidden below lg — spec: "No distracting particles," so on small screens
  * where it'd compete with the headline, it's simplest to omit it entirely.
+ *
+ * Opacity reduced from 40 to 25 in the Portrait integration pass so the
+ * network reads as sitting behind the portrait rather than competing with
+ * it — nodes and lines remain visible around the portrait's silhouette,
+ * per spec "network should remain visible behind and partially around."
  */
 export function HeroNetwork() {
   return (
     <svg
       aria-hidden="true"
       viewBox="0 0 640 640"
-      className="absolute right-0 top-0 hidden h-full w-[45%] opacity-40 lg:block"
+      className="absolute right-0 top-0 hidden h-full w-[45%] opacity-25 lg:block"
       preserveAspectRatio="xMidYMid slice"
     >
       {EDGES.map(([a, b], index) => {

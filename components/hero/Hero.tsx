@@ -8,7 +8,11 @@ import { HeroBackground } from "@/components/hero/HeroBackground";
 import { HeroHeadline } from "@/components/hero/HeroHeadline";
 import { HeroButtons } from "@/components/hero/HeroButtons";
 import { HeroScrollIndicator } from "@/components/hero/HeroScrollIndicator";
-import { buildHeroTimeline } from "@/animations/hero";
+import {
+  buildHeroTimeline,
+  buildHeroPortraitIdle,
+  attachHeroPortraitParallax,
+} from "@/animations/hero";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useLoaderComplete } from "@/hooks/useLoaderComplete";
 
@@ -24,13 +28,23 @@ import { useLoaderComplete } from "@/hooks/useLoaderComplete";
  * playing once useLoaderComplete() reports the Loader has finished, so the
  * two never animate at the same time and there's no flash of a
  * fully-formed Hero showing through the Loader's fade-out.
+ *
+ * Portrait integration pass: once the entrance timeline resolves, a
+ * persistent idle float and a tiny mouse-parallax are attached to the
+ * portrait only — both are cleaned up on unmount and both are skipped
+ * entirely under prefers-reduced-motion.
  */
 export function Hero() {
-  const backgroundRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const networkRef = useRef<HTMLDivElement>(null);
+  const portraitRef = useRef<HTMLDivElement>(null);
+  const portraitGlowRef = useRef<HTMLDivElement>(null);
   const headlineContainerRef = useRef<HTMLDivElement>(null);
   const buttonsContainerRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
+  const idleTweenRef = useRef<gsap.core.Tween | null>(null);
+  const parallaxCleanupRef = useRef<(() => void) | null>(null);
 
   const reducedMotion = useReducedMotion();
   const loaderComplete = useLoaderComplete();
@@ -48,7 +62,9 @@ export function Hero() {
       : [];
 
     const refs = {
-      network: backgroundRef.current,
+      network: networkRef.current,
+      portrait: portraitRef.current,
+      portraitGlow: portraitGlowRef.current,
       headlineLines,
       supportingCopy,
       buttons,
@@ -58,6 +74,8 @@ export function Hero() {
     if (reducedMotion) {
       const targets = [
         refs.network,
+        refs.portrait,
+        refs.portraitGlow,
         ...refs.headlineLines,
         refs.supportingCopy,
         ...refs.buttons,
@@ -74,22 +92,46 @@ export function Hero() {
     return () => {
       tl.kill();
       timelineRef.current = null;
+      idleTweenRef.current?.kill();
+      idleTweenRef.current = null;
+      parallaxCleanupRef.current?.();
+      parallaxCleanupRef.current = null;
     };
   }, [reducedMotion]);
 
   useEffect(() => {
-    if (loaderComplete) {
-      timelineRef.current?.play();
-    }
-  }, [loaderComplete]);
+    if (!loaderComplete) return;
+
+    const tl = timelineRef.current;
+    tl?.play();
+
+    if (reducedMotion || !tl) return;
+
+    tl.then(() => {
+      if (portraitRef.current) {
+        idleTweenRef.current = buildHeroPortraitIdle(portraitRef.current);
+      }
+      if (sectionRef.current && portraitRef.current) {
+        parallaxCleanupRef.current = attachHeroPortraitParallax(
+          sectionRef.current,
+          portraitRef.current
+        );
+      }
+    });
+  }, [loaderComplete, reducedMotion]);
 
   return (
     <section
+      ref={sectionRef}
       id="hero"
       aria-label="Hero"
       className="relative flex min-h-screen items-center overflow-hidden pb-24 pt-24"
     >
-      <HeroBackground ref={backgroundRef} />
+      <HeroBackground
+        networkRef={networkRef}
+        portraitRef={portraitRef}
+        portraitGlowRef={portraitGlowRef}
+      />
 
       <Container className="relative z-10">
         <Grid>

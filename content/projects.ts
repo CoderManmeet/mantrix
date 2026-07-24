@@ -22,6 +22,7 @@ export const PROJECTS: Project[] = [
     challenge:
       "Cross-domain cookies were blocked in production, so auth was migrated from httpOnly cookies to Bearer tokens.",
     status: "Completed",
+    imageUrl: "/images/projects/projectflow.png",
   },
   {
     slug: "quickdesk",
@@ -29,6 +30,7 @@ export const PROJECTS: Project[] = [
     categories: ["Business Systems", "SaaS"],
     summary: "A help desk / ticketing system for internal support workflows.",
     status: "Completed",
+    imageUrl: "/images/projects/quickdesk.png",
   },
   {
     slug: "placement-tracker",
@@ -36,6 +38,7 @@ export const PROJECTS: Project[] = [
     categories: ["Business Systems"],
     summary: "A system for tracking placement and recruitment workflows.",
     status: "Completed",
+    imageUrl: "/images/projects/placement-tracker.png",
   },
   {
     slug: "real-estate-os",
@@ -45,6 +48,7 @@ export const PROJECTS: Project[] = [
     stack: ["Node.js", "Express", "TypeScript", "Prisma", "PostgreSQL"],
     challenge: "Getting a reliable local PostgreSQL setup running across environments.",
     status: "In Development",
+    imageUrl: "/images/projects/Real-estate.png",
   },
   {
     slug: "suto-cafe",
@@ -52,6 +56,7 @@ export const PROJECTS: Project[] = [
     categories: ["Web"],
     summary: "A client website built for Suto Café.",
     status: "Live",
+    imageUrl: "/images/projects/suto.png",
   },
   {
     slug: "portfolio",
@@ -62,5 +67,6 @@ export const PROJECTS: Project[] = [
     challenge:
       "The blog originally used next-mdx-remote, which crashed persistently — rebuilt on unified/remark/rehype instead.",
     status: "Live",
+    imageUrl: "/images/projects/portfolio.png",
   },
 ];
