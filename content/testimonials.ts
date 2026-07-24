@@ -15,28 +15,30 @@ export interface Testimonial {
 }
 
 export const TESTIMONIALS: Testimonial[] = [
+  // {
+  //   clientName: "Suto Café",
+  //   businessName: "Suto Café",
+  //   industry: "Café",
+  //   quote: "Final testimonial pending approval.",
+  //   rating: 5,
+  //   isPlaceholder: true,
+  // },
   {
-    clientName: "Suto Café",
-    businessName: "Suto Café",
-    industry: "Café",
-    quote: "Final testimonial pending approval.",
+    clientName: "Dr. Jaspreet Grewal",
+    businessName: "Lexi Pet Clinic",
+    industry: "Veterinary Clinic",
+    quote: "Mantrix delivered a website that perfectly reflects our clinic. We've received more appointment inquiries and great feedback from pet owners.",
     rating: 5,
-    isPlaceholder: true,
+    projectUrl: "https://lexipetclinic.com/",
+    isPlaceholder: false,
   },
   {
-    clientName: "Veterinary Clinic",
-    businessName: "Veterinary Clinic",
-    industry: "Veterinary Care",
-    quote: "Final testimonial pending approval.",
-    rating: 5,
-    isPlaceholder: true,
-  },
-  {
-    clientName: "Yoga Studio",
+    clientName: "Sandeep Kaur",
     businessName: "Yoga Studio",
-    industry: "Wellness",
-    quote: "Final testimonial pending approval.",
+    industry: "Yoga Studio",
+    quote: "From the first meeting to launch, everything was handled professionally. We started receiving more inquiries within weeks.",
     rating: 5,
-    isPlaceholder: true,
+
+    isPlaceholder: false,
   },
 ];

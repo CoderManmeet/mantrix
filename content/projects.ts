@@ -24,7 +24,7 @@ export const PROJECTS: Project[] = [
       "Cross-domain cookies were blocked in production, so auth was migrated from httpOnly cookies to Bearer tokens.",
     status: "Completed",
     imageUrl: "/images/projects/projectflow.png",
-    url : "",
+    url : "https://project-flow-b76v-five.vercel.app/login",
     githubUrl: "https://github.com/CoderManmeet/project-flow",
   },
   {
@@ -34,6 +34,7 @@ export const PROJECTS: Project[] = [
     summary: "A help desk / ticketing system for internal support workflows.",
     status: "Completed",
     imageUrl: "/images/projects/quickdeskk.png",
+    url : "",
     githubUrl: "https://github.com/CoderManmeet/QUICKDESK",
   },
   {
@@ -63,6 +64,7 @@ export const PROJECTS: Project[] = [
     summary: "A client website built for Suto Café.",
     status: "Live",
     imageUrl: "/images/projects/suto.png",
+    url: "https://suto-cafe.vercel.app/",
     githubUrl: "https://github.com/CoderManmeet/suto-cafe"
   },
   {
