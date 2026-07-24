@@ -1,21 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { BUDGET_OPTIONS } from "@/content/contact";
-
-const contactSchema = z.object({
-  name: z.string().trim().min(2, "Enter your name."),
-  email: z.string().trim().email("Enter a valid email address."),
-  company: z.string().trim().optional(),
-  project: z.string().trim().min(10, "Give a short description of the project."),
-  budget: z.string().optional(),
-  message: z.string().trim().min(10, "Message is a bit short — add a few more details."),
-});
-
-type ContactFormValues = z.infer<typeof contactSchema>;
+import { contactSchema, type ContactFormValues } from "@/lib/validations/contact";
 
 const inputClass =
   "w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-body text-[var(--color-text-primary)] outline-none transition-colors duration-250 placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-accent)]";
@@ -23,21 +13,54 @@ const inputClass =
 const errorClass = "mt-1 text-caption text-[var(--color-error)]";
 
 export function ContactForm() {
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isSubmitting },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
   });
 
   const onSubmit = async (values: ContactFormValues) => {
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    console.log("Contact form submitted (not yet sent anywhere):", values);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        let message = "Something went wrong. Please try again.";
+        try {
+          const data = await response.json();
+          if (data?.error) message = data.error;
+        } catch {
+          // response wasn't JSON — fall back to default message
+        }
+        setSubmitError(message);
+        return;
+      }
+
+      setSubmitSuccess(true);
+    } catch {
+      // network error, timeout, DNS failure, etc.
+      setSubmitError("Something went wrong. Please try again.");
+    }
   };
 
-  if (isSubmitSuccessful) {
+  const handleReset = () => {
+    reset();
+    setSubmitSuccess(false);
+    setSubmitError(null);
+  };
+
+  if (submitSuccess) {
     return (
       <div
         role="status"
@@ -47,7 +70,7 @@ export function ContactForm() {
         <p className="mt-2 text-body text-[var(--color-text-secondary)]">
           We'll get back to you shortly.
         </p>
-        <Button variant="text" className="mt-6" onClick={() => reset()} data-cursor="clickable">
+        <Button variant="text" className="mt-6" onClick={handleReset} data-cursor="clickable">
           Send another message
         </Button>
       </div>
@@ -115,6 +138,8 @@ export function ContactForm() {
         <textarea id="message" rows={5} className={inputClass} {...register("message")} />
         {errors.message && <p className={errorClass}>{errors.message.message}</p>}
       </div>
+
+      {submitError && <p className={errorClass}>{submitError}</p>}
 
       <Button type="submit" variant="primary" showArrow disabled={isSubmitting} className="w-fit" data-cursor="clickable">
         {isSubmitting ? "Sending…" : "Send Message"}
