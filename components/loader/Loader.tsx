@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { buildLoaderTimeline } from "@/animations/loader";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { LoaderPulseLine } from "@/components/loader/LoaderPulseLine";
+import { LOADER_COMPLETE_EVENT } from "@/hooks/useLoaderComplete";
 
 const STORAGE_KEY = "mantrix-loader-seen";
 
@@ -28,11 +29,13 @@ export function Loader() {
   useLayoutEffect(() => {
     const alreadySeen = sessionStorage.getItem(STORAGE_KEY) === "true";
     if (alreadySeen) {
-      document.body.style.overflow = "";
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- justified: sessionStorage is client-only; the loader is already hidden instantly via CSS (see globals.css), this only unmounts the dead DOM node post-hydration, no visible change occurs.
-      setIsVisible(false);
-      return;
-    }
+  document.body.style.overflow = "";
+
+  window.dispatchEvent(new Event(LOADER_COMPLETE_EVENT));
+
+  setIsVisible(false);
+  return;
+}
     document.body.style.overflow = "hidden";
   }, []);
 
@@ -41,10 +44,13 @@ export function Loader() {
     if (sessionStorage.getItem(STORAGE_KEY) === "true") return; // guards a rare race with the effect above
 
     const finish = () => {
-      sessionStorage.setItem(STORAGE_KEY, "true");
-      document.body.style.overflow = "";
-      setIsVisible(false);
-    };
+  sessionStorage.setItem(STORAGE_KEY, "true");
+
+  window.dispatchEvent(new Event(LOADER_COMPLETE_EVENT));
+
+  document.body.style.overflow = "";
+  setIsVisible(false);
+};
 
     if (reducedMotion) {
       const tl = gsap.timeline({ onComplete: finish });
