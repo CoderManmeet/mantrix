@@ -58,23 +58,36 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Runs synchronously before <body> paints. Prevents the loader
+            flash: without this, SSR can't know sessionStorage, so the raw
+            HTML paints Hero first and the loader pops in after hydration.
+            This tags <html> before any content is visible, so CSS can hide
+            the loader instantly with zero flash, on both first and repeat
+            visits. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(sessionStorage.getItem("mantrix-loader-seen")==="true"){document.documentElement.setAttribute("data-loader-seen","true");}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider>
           
-          <a  href="#main-content"
+           <a
+            href="#main-content"
             className="fixed left-4 top-4 z-[var(--z-toast)] -translate-y-24 rounded-[var(--radius-md)] bg-[var(--color-accent)] px-4 py-2 text-small font-medium text-[var(--color-black)] transition-transform duration-250 focus:translate-y-0"
           >
             Skip to content
           </a>
-
           <Loader />
           <Background />
           <SpotlightCursor />
           <Navbar />
-
-          <div id="main-content" className="relative z-10">
+          <div id="main-content" className="relative z-10 pb-24 md:pb-0">
             <PageTransition>{children}</PageTransition>
           </div>
+          <MobileFloatingCTA />
         </ThemeProvider>
         <Analytics />
       </body>

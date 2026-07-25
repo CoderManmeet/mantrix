@@ -35,3 +35,17 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Loader FOUC prevention. data-loader-seen is set synchronously by the
+   blocking script in <head>, before <body> paints — so this CSS rule is
+   already active by the time the loader's DOM node exists, hiding it
+   instantly instead of after a visible pop-in. */
+[data-loader-seen="true"] #mantrix-loader {
+  display: none !important;
+}
+
+/* Scroll stays locked by default (matches "not yet seen" SSR assumption);
+   JS unlocks it once the loader finishes or is skipped. */
+html:not([data-loader-seen="true"]) body {
+  overflow: hidden;
+}

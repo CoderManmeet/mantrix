@@ -4,18 +4,20 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { buildLoaderTimeline } from "@/animations/loader";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { LOADER_COMPLETE_EVENT } from "@/hooks/useLoaderComplete";
 import { LoaderPulseLine } from "@/components/loader/LoaderPulseLine";
 
 const STORAGE_KEY = "mantrix-loader-seen";
 
 /**
- * Renders only on first visit per session (spec: "Loader only on first
- * visit"). Uses sessionStorage — reappears in a new tab/session, but not
- * on every route change within the same visit.
+ * Always renders on both server and first client render (isVisible starts
+ * true on both — deterministic, no hydration mismatch). The actual "should
+ * this be hidden" decision is handled two ways:
+ *  1. Instantly, via CSS + the blocking <head> script (zero-flash path).
+ *  2. As a cleanup unmount here, once React has hydrated (cosmetically
+ *     invisible since step 1 already hid it).
  */
 export function Loader() {
-  const [shouldRender, setShouldRender] = useState<boolean | null>(null);
+  const [isVisible, setIsVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const noiseRef = useRef<HTMLDivElement>(null);
   const pulseLineRef = useRef<SVGLineElement>(null);
@@ -23,24 +25,25 @@ export function Loader() {
   const wordmarkRef = useRef<HTMLHeadingElement>(null);
   const reducedMotion = useReducedMotion();
 
-  // Deciding whether to render the loader depends on sessionStorage, which
-  // doesn't exist during SSR — this must resolve client-side before paint
-  // to avoid a flash of Hero content underneath. Same justified pattern as
-  // next-themes' hydration-safe "mounted" flag.
   useLayoutEffect(() => {
     const alreadySeen = sessionStorage.getItem(STORAGE_KEY) === "true";
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- justified: sessionStorage is client-only; see comment above.
-    setShouldRender(!alreadySeen);
-    document.body.style.overflow = alreadySeen ? "" : "hidden";
+    if (alreadySeen) {
+      document.body.style.overflow = "";
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- justified: sessionStorage is client-only; the loader is already hidden instantly via CSS (see globals.css), this only unmounts the dead DOM node post-hydration, no visible change occurs.
+      setIsVisible(false);
+      return;
+    }
+    document.body.style.overflow = "hidden";
   }, []);
+
   useEffect(() => {
-    if (!shouldRender) return;
+    if (!isVisible) return;
+    if (sessionStorage.getItem(STORAGE_KEY) === "true") return; // guards a rare race with the effect above
 
     const finish = () => {
       sessionStorage.setItem(STORAGE_KEY, "true");
       document.body.style.overflow = "";
-      setShouldRender(false);
-      window.dispatchEvent(new Event(LOADER_COMPLETE_EVENT));
+      setIsVisible(false);
     };
 
     if (reducedMotion) {
@@ -69,14 +72,15 @@ export function Loader() {
     return () => {
       tl.kill();
     };
-  }, [shouldRender, reducedMotion]);
+  }, [isVisible, reducedMotion]);
 
-  if (shouldRender === null || shouldRender === false) return null;
+  if (!isVisible) return null;
 
   const wordmark = "MANTRIX".split("");
 
   return (
     <div
+      id="mantrix-loader"
       ref={containerRef}
       role="status"
       aria-label="Loading MANTRIX"

@@ -13,7 +13,7 @@ export default function NotFound() {
           This page doesn&apos;t exist.
         </h1>
         <p className="mt-4 max-w-[32rem] text-body text-[var(--color-text-secondary)]">
-          The page you're looking for may have been moved or never existed.
+          The page you&apos;re looking for may have been moved or never existed.
         </p>
         <Link href="/" className="mt-8 inline-block" data-cursor="clickable">
           <Button variant="primary">Back to home</Button>

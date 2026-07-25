@@ -68,7 +68,7 @@ export function ContactForm() {
       >
         <h3 className="text-h5 font-semibold text-[var(--color-text-primary)]">Message received.</h3>
         <p className="mt-2 text-body text-[var(--color-text-secondary)]">
-          We'll get back to you shortly.
+         We&apos;ll get back to you shortly.
         </p>
         <Button variant="text" className="mt-6" onClick={handleReset} data-cursor="clickable">
           Send another message
