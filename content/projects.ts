@@ -23,7 +23,7 @@ export const PROJECTS: Project[] = [
     challenge:
       "Cross-domain cookies were blocked in production, so auth was migrated from httpOnly cookies to Bearer tokens.",
     status: "Completed",
-    imageUrl: "/images/projects/projectflow.png",
+    imageUrl: "/images/projects/Projectflow.png",
     url : "https://project-flow-b76v-five.vercel.app/login",
     githubUrl: "https://github.com/CoderManmeet/project-flow",
   },
