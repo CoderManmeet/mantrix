@@ -57,7 +57,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* Runs synchronously before <body> paints. Prevents the loader
             flash: without this, SSR can't know sessionStorage, so the raw
@@ -66,10 +66,27 @@ export default function RootLayout({
             the loader instantly with zero flash, on both first and repeat
             visits. */}
         <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{if(sessionStorage.getItem("mantrix-loader-seen")==="true"){document.documentElement.setAttribute("data-loader-seen","true");}}catch(e){}})();`,
-          }}
-        />
+  dangerouslySetInnerHTML={{
+    __html: `
+      (function () {
+        try {
+          const seen =
+            sessionStorage.getItem("mantrix-loader-seen") === "true";
+
+          document.documentElement.setAttribute(
+            "data-loader-seen",
+            seen ? "true" : "false"
+          );
+        } catch (e) {
+          document.documentElement.setAttribute(
+            "data-loader-seen",
+            "false"
+          );
+        }
+      })();
+    `,
+  }}
+/>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider>
@@ -85,7 +102,9 @@ export default function RootLayout({
           <SpotlightCursor />
           <Navbar />
           <div id="main-content" className="relative z-10 pb-24 md:pb-0">
-            <PageTransition>{children}</PageTransition>
+            <PageTransition>
+              {children}
+              </PageTransition>
           </div>
           <MobileFloatingCTA />
         </ThemeProvider>

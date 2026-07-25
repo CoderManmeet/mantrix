@@ -8,15 +8,14 @@ import { LoaderPulseLine } from "@/components/loader/LoaderPulseLine";
 import { LOADER_COMPLETE_EVENT } from "@/hooks/useLoaderComplete";
 
 const STORAGE_KEY = "mantrix-loader-seen";
+const FAILSAFE_MS = 4000; // hard ceiling — if anything goes wrong, force-unlock by this point regardless
 
-/**
- * Always renders on both server and first client render (isVisible starts
- * true on both — deterministic, no hydration mismatch). The actual "should
- * this be hidden" decision is handled two ways:
- *  1. Instantly, via CSS + the blocking <head> script (zero-flash path).
- *  2. As a cleanup unmount here, once React has hydrated (cosmetically
- *     invisible since step 1 already hid it).
- */
+function unlock() {
+  sessionStorage.setItem(STORAGE_KEY, "true");
+  document.documentElement.setAttribute("data-loader-seen", "true");
+  document.body.style.overflow = "";
+}
+
 export function Loader() {
   const [isVisible, setIsVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -29,54 +28,62 @@ export function Loader() {
   useLayoutEffect(() => {
     const alreadySeen = sessionStorage.getItem(STORAGE_KEY) === "true";
     if (alreadySeen) {
-  document.body.style.overflow = "";
-
-  window.dispatchEvent(new Event(LOADER_COMPLETE_EVENT));
-
-  setIsVisible(false);
-  return;
-}
+      unlock();
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- justified: sessionStorage is client-only; loader is already hidden via CSS, this only unmounts the dead node post-hydration.
+      setIsVisible(false);
+      return;
+    }
     document.body.style.overflow = "hidden";
   }, []);
 
   useEffect(() => {
     if (!isVisible) return;
-    if (sessionStorage.getItem(STORAGE_KEY) === "true") return; // guards a rare race with the effect above
+    if (sessionStorage.getItem(STORAGE_KEY) === "true") return;
 
+    let finished = false;
     const finish = () => {
-  sessionStorage.setItem(STORAGE_KEY, "true");
+      if (finished) return;
+      finished = true;
+      unlock();
+      setIsVisible(false);
+      window.dispatchEvent(new Event(LOADER_COMPLETE_EVENT)); // ← add this line
+    };
 
-  window.dispatchEvent(new Event(LOADER_COMPLETE_EVENT));
+    // Failsafe: whatever happens to GSAP/the timeline, the user is never
+    // stuck. This is the fix for the actual complaint — a broken animation
+    // should degrade to "page just works," never to "page is frozen."
+    const failsafeTimer = window.setTimeout(finish, FAILSAFE_MS);
 
-  document.body.style.overflow = "";
-  setIsVisible(false);
-};
+    let tl: gsap.core.Timeline | undefined;
 
-    if (reducedMotion) {
-      const tl = gsap.timeline({ onComplete: finish });
-      tl.to(containerRef.current, { opacity: 0, duration: 0.4, ease: "power2.inOut" }, 0.3);
-      return () => {
-        tl.kill();
-      };
+    try {
+      if (reducedMotion) {
+        tl = gsap.timeline({ onComplete: finish });
+        tl.to(containerRef.current, { opacity: 0, duration: 0.4, ease: "power2.inOut" }, 0.3);
+      } else {
+        const wordmarkLetters = wordmarkRef.current
+          ? Array.from(wordmarkRef.current.querySelectorAll<HTMLElement>("[data-letter]"))
+          : [];
+
+        tl = buildLoaderTimeline(
+          {
+            noise: noiseRef.current,
+            pulseLine: pulseLineRef.current,
+            wordmarkLetters,
+            tagline: taglineRef.current,
+            container: containerRef.current,
+          },
+          finish
+        );
+      }
+    } catch {
+      // If GSAP throws for any reason, don't leave the page locked.
+      finish();
     }
 
-    const wordmarkLetters = wordmarkRef.current
-      ? Array.from(wordmarkRef.current.querySelectorAll<HTMLElement>("[data-letter]"))
-      : [];
-
-    const tl = buildLoaderTimeline(
-      {
-        noise: noiseRef.current,
-        pulseLine: pulseLineRef.current,
-        wordmarkLetters,
-        tagline: taglineRef.current,
-        container: containerRef.current,
-      },
-      finish
-    );
-
     return () => {
-      tl.kill();
+      window.clearTimeout(failsafeTimer);
+      tl?.kill();
     };
   }, [isVisible, reducedMotion]);
 

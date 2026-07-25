@@ -46,6 +46,7 @@ body {
 
 /* Scroll stays locked by default (matches "not yet seen" SSR assumption);
    JS unlocks it once the loader finishes or is skipped. */
+/* CORRECT */
 html:not([data-loader-seen="true"]) body {
   overflow: hidden;
 }
