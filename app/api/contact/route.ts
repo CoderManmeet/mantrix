@@ -1,8 +1,36 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import twilio from "twilio";
 import { contactSchema } from "@/lib/validations/contact";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+async function sendWhatsAppNotification(data: {
+  name: string;
+  company?: string;
+  email: string;
+  budget?: string;
+  project: string;
+}) {
+  try {
+    await twilioClient.messages.create({
+      from: process.env.TWILIO_WHATSAPP_FROM as string,
+      to: process.env.TWILIO_WHATSAPP_TO as string,
+      body:
+        `New website enquiry\n\n` +
+        `Name: ${data.name}\n` +
+        `Business: ${data.company || "—"}\n` +
+        `Email: ${data.email}\n` +
+        `Budget: ${data.budget || "—"}\n` +
+        `Service: ${data.project}`,
+    });
+  } catch (error) {
+    // WhatsApp is a secondary notification — never let it block or fail the request
+    console.error("WhatsApp notification failed:", error);
+  }
+}
 
 function buildHtmlEmail(data: {
   name: string;
@@ -124,6 +152,8 @@ export async function POST(request: Request) {
     if (result.error) {
       return NextResponse.json({ error: "Failed to send message." }, { status: 502 });
     }
+
+    await sendWhatsAppNotification({ name, company, email, budget, project });
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
