@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
+
 import twilio from "twilio";
 import { contactSchema } from "@/lib/validations/contact";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+
 
 const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
@@ -140,18 +140,45 @@ export async function POST(request: Request) {
 
     const emailData = { name, company, email, budget, project, message, submittedAt };
 
-    const result = await resend.emails.send({
-      from: process.env.CONTACT_EMAIL_FROM as string,
-      to: process.env.CONTACT_EMAIL_TO as string,
-      replyTo: email,
-      subject: "NEW WEBSITE ENQUIRY",
-      html: buildHtmlEmail(emailData),
-      text: buildTextEmail(emailData),
-    });
+    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+  method: "POST",
+  headers: {
+    accept: "application/json",
+    "content-type": "application/json",
+    "api-key": process.env.BREVO_API_KEY as string,
+  },
+  body: JSON.stringify({
+    sender: {
+      name: "MANTRIX",
+      email: process.env.CONTACT_EMAIL_FROM,
+    },
+    to: [
+      {
+        email: process.env.CONTACT_EMAIL_TO,
+      },
+    ],
+    replyTo: {
+      email,
+      name,
+    },
+    subject: "NEW WEBSITE ENQUIRY",
+    htmlContent: buildHtmlEmail(emailData),
+    textContent: buildTextEmail(emailData),
+  }),
+});
 
-    if (result.error) {
-      return NextResponse.json({ error: "Failed to send message." }, { status: 502 });
+if (!response.ok) {
+  console.error(await response.text());
+
+  return NextResponse.json(
+    {
+      error: "Failed to send message.",
+    },
+    {
+      status: 502,
     }
+  );
+}
 
     await sendWhatsAppNotification({ name, company, email, budget, project });
 
