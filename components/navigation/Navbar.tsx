@@ -6,14 +6,14 @@ import { NAV_ITEMS, NAV_CTA, NAV_LOGO } from "@/constants/navigation";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { useMagnetic } from "@/hooks/useMagnetic";
-import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
 import { MobileNav } from "@/components/navigation/MobileNav";
 
 export function Navbar() {
   const { isScrolled } = useScrollDirection();
   const activeId = useActiveSection(NAV_ITEMS.map((item) => item.href.replace("#", "")));
   const [mobileOpen, setMobileOpen] = useState(false);
-  const ctaMagneticRef = useMagnetic<HTMLButtonElement>();
+  const ctaMagneticRef = useMagnetic<HTMLAnchorElement>();
 
   return (
     <header
@@ -57,10 +57,10 @@ export function Navbar() {
         </ul>
 
         <div className="hidden md:block">
-          <Button ref={ctaMagneticRef} variant="primary" showArrow data-cursor="clickable">
-            {NAV_CTA.label}
-          </Button>
-        </div>
+  <ButtonLink ref={ctaMagneticRef} href={NAV_CTA.href} variant="primary" showArrow data-cursor="clickable">
+    {NAV_CTA.label}
+  </ButtonLink>
+</div>
 
         <button
           type="button"

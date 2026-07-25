@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { NAV_ITEMS, NAV_CTA } from "@/constants/navigation";
-import { Button } from "@/components/ui/Button";
+import { NAV_ITEMS} from "@/constants/navigation";
+// import { ButtonLink } from "@/components/ui/Button";
 
 interface MobileNavProps {
   open: boolean;
@@ -58,11 +58,11 @@ export function MobileNav({ open, onClose, activeId }: MobileNavProps) {
             </li>
           );
         })}
-        <li className="mt-4">
-          <Button variant="primary" showArrow onClick={onClose} className="w-full justify-center">
-            {NAV_CTA.label}
-          </Button>
-        </li>
+        {/* <li className="mt-4">
+  <ButtonLink href={NAV_CTA.href} variant="primary" showArrow onClick={onClose} className="w-full justify-center">
+    {NAV_CTA.label}
+  </ButtonLink>
+</li> */}
       </ul>
     </div>
   );

@@ -7,12 +7,13 @@ import { Navbar } from "@/components/navigation/Navbar";
 import { Loader } from "@/components/loader/Loader";
 import { SpotlightCursor } from "@/components/cursor/SpotlightCursor";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { MobileFloatingCTA } from "@/components/navigation/MobileFloatingCTA";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-const SITE_URL = "https://mantrix.dev";
+const SITE_URL = "https://manmeetcodes.in";
 const SITE_TITLE = "MANTRIX — Intelligent Digital Systems";
 const SITE_DESCRIPTION =
   "We engineer intelligent digital systems that help ambitious businesses grow faster.";
