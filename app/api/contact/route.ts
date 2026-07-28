@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
 
-import twilio from "twilio";
 import { contactSchema } from "@/lib/validations/contact";
 
-
-
-const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-
-async function sendWhatsAppNotification(data: {
+async function sendTelegramNotification(data: {
   name: string;
   company?: string;
   email: string;
@@ -15,20 +10,30 @@ async function sendWhatsAppNotification(data: {
   project: string;
 }) {
   try {
-    await twilioClient.messages.create({
-      from: process.env.TWILIO_WHATSAPP_FROM as string,
-      to: process.env.TWILIO_WHATSAPP_TO as string,
-      body:
-        `New website enquiry\n\n` +
-        `Name: ${data.name}\n` +
-        `Business: ${data.company || "—"}\n` +
-        `Email: ${data.email}\n` +
-        `Budget: ${data.budget || "—"}\n` +
-        `Service: ${data.project}`,
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+
+    const text =
+      `📩 New website enquiry\n\n` +
+      `Name: ${data.name}\n` +
+      `Business: ${data.company || "—"}\n` +
+      `Email: ${data.email}\n` +
+      `Budget: ${data.budget || "—"}\n` +
+      `Service: ${data.project}`;
+
+    const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text }),
     });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error("Telegram notification failed:", errorBody);
+    }
   } catch (error) {
-    // WhatsApp is a secondary notification — never let it block or fail the request
-    console.error("WhatsApp notification failed:", error);
+    // Telegram is a secondary notification — never let it block or fail the request
+    console.error("Telegram notification failed:", error);
   }
 }
 
@@ -180,7 +185,7 @@ if (!response.ok) {
   );
 }
 
-    await sendWhatsAppNotification({ name, company, email, budget, project });
+    await sendTelegramNotification({ name, company, email, budget, project });
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
