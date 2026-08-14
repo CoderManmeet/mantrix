@@ -37,14 +37,15 @@ export const PROJECTS: Project[] = [
     url : "",
     githubUrl: "https://github.com/CoderManmeet/QUICKDESK",
   },
-  {
-    slug: "placement-tracker",
-    name: "Placement Tracker",
-    categories: ["Business Systems"],
-    summary: "A system for tracking placement and recruitment workflows.",
-    status: "Completed",
-    imageUrl: "/images/projects/placement-trackerr.png",
-    githubUrl: "https://github.com/CoderManmeet/placement-tracker",
+ {
+    slug: "lexi-pet-clinic",
+    name: "Lexi Pet Clinic",
+    categories: ["Web"],
+    summary: "A warm, premium veterinary clinic website with online appointment booking and a fear-free brand experience.",
+    status: "Live",
+    imageUrl: "/images/projects/lexi-pet-clinic.png",
+    url : "https://lexi-pet-clinic-two.vercel.app/",
+    githubUrl: "https://github.com/CoderManmeet/lexi-pet-clinic",
   },
   {
     slug: "real-estate-os",
@@ -53,8 +54,9 @@ export const PROJECTS: Project[] = [
     summary: "A real estate CRM built on a relational Postgres architecture, currently in development.",
     stack: ["Node.js", "Express", "TypeScript", "Prisma", "PostgreSQL"],
     challenge: "Getting a reliable local PostgreSQL setup running across environments.",
-    status: "In Development",
+    status: "Live",
     imageUrl: "/images/projects/Real-estate.png",
+    url : "https://real-estate-os-kappa.vercel.app/",
     githubUrl: "https://github.com/CoderManmeet/real-estate-os"
   },
   {
